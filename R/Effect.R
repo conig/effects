@@ -113,7 +113,7 @@ Effect <- function(focal.predictors, mod, ...){
 # 2017-12-04 new Effect.default that actually works
 # 2017-12-07 added Effects.lme, .mer, gls that work
 
-Effect.default <- function(focal.predictors, mod, ..., sources){ 
+Effect.default <- function(focal.predictors, mod, ..., sources, envir = parent.frame()){ 
 # 2020/05/23 ... uses 'insight' package, else
 # if sources is null, try to construct it
   sources <- if(missing(sources)) effSources(mod) else sources
@@ -175,7 +175,8 @@ Effect.default <- function(focal.predictors, mod, ..., sources){
 # The only information used from this "fake" object are the coefficients and 
 # the variance-covariance matrix, and these are copied from the original 
 # object so Effects plots the right things.
-  mod2 <- eval(cl)
+  mod2 <- eval(cl, envir = envir)
+  #browser()
   mod2$coefficients <- coefficients
   mod2$vcov <- vcov
   if(!is.null(zeta)) mod2$zeta <- zeta # added 7/5/2019
@@ -238,7 +239,7 @@ Effect.lm <- function(focal.predictors, mod, xlevels=list(), fixed.predictors,
     }
     xlevels <- xlevs
   }
-  
+
   if (!missing(partial.residuals)) residuals <- partial.residuals
   partial.residuals <- residuals
   if (missing(transformation)) 
@@ -303,6 +304,7 @@ Effect.lm <- function(focal.predictors, mod, xlevels=list(), fixed.predictors,
   x.var <- model.components$x.var
   formula.rhs <- formula(mod)[c(1, 3)]
   Terms <- delete.response(terms(mod))
+
   mf <- model.frame(Terms, predict.data, xlev = factor.levels, na.action=NULL)
   mod.matrix <- model.matrix(formula.rhs, data = mf, contrasts.arg = mod$contrasts)
   if (is.null(x.var)) partial.residuals <- FALSE
@@ -685,7 +687,7 @@ Effect.merMod <- function(focal.predictors, mod, ..., KR=FALSE){
     family=fam,
     vcov = if (fam$family == "gaussian" && fam$link == "identity" && KR)
       as.matrix(pbkrtest::vcovAdj(mod)) else insight::get_varcov(mod))
-  Effect.default(focal.predictors, mod, ..., sources=args)
+  Effect.default(focal.predictors, mod, ..., sources=args, envir = sys.parent())
 }
 
 # svyglm
