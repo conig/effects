@@ -679,8 +679,7 @@ Effect.polr <- function(focal.predictors, mod,
 
 # merMod -- included here to allow addtional KR argument
 Effect.merMod <- function(focal.predictors, mod, ..., KR=FALSE){
-  print("Parent is: ")
-  print(sys.parent())
+
   if (KR && !requireNamespace("pbkrtest", quietly=TRUE)){
     KR <- FALSE
     warning("pbkrtest is not available, KR set to FALSE")}
