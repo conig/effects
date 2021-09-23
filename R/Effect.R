@@ -176,7 +176,7 @@ Effect.default <- function(focal.predictors, mod, ..., sources, envir = parent.f
 # the variance-covariance matrix, and these are copied from the original 
 # object so Effects plots the right things.
   mod2 <- eval(cl, envir = envir)
-  #browser()
+  
   mod2$coefficients <- coefficients
   mod2$vcov <- vcov
   if(!is.null(zeta)) mod2$zeta <- zeta # added 7/5/2019
@@ -679,6 +679,8 @@ Effect.polr <- function(focal.predictors, mod,
 
 # merMod -- included here to allow addtional KR argument
 Effect.merMod <- function(focal.predictors, mod, ..., KR=FALSE){
+  print("Parent is: ")
+  print(sys.parent())
   if (KR && !requireNamespace("pbkrtest", quietly=TRUE)){
     KR <- FALSE
     warning("pbkrtest is not available, KR set to FALSE")}
